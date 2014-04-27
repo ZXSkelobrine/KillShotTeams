@@ -1,5 +1,5 @@
 name: KillShotTeams
-main: com.github.ZXSkelobrine.KillShot.teams.Central;
+main: com.github.ZXSkelobrine.KillShot.teams.Central
 version: 0.0.1
 commands:
   t:

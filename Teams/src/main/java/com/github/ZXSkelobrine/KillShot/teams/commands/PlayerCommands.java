@@ -16,12 +16,12 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 	}
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (command.getName().equalsIgnoreCase("create")) {
+		if (args[0].equalsIgnoreCase("create")) {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
-				if (args.length == 2) {
-					String name = args[0];
-					String password = args[1];
+				if (args.length == 3) {
+					String name = args[1];
+					String password = args[2];
 					SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam", true, plugin);
 					SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam.ownsteam", true, plugin);
 					SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.name", name, plugin);
