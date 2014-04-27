@@ -1,0 +1,5 @@
+teams:
+    tester:
+        name: player1steam
+        pass: testpass
+        owner: player1

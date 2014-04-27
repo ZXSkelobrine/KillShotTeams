@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.ZXSkelobrine.KillShot.teams.commands.AdminCommands;
 import com.github.ZXSkelobrine.KillShot.teams.commands.PlayerCommands;
+import com.github.ZXSkelobrine.KillShot.teams.metadata.SimpleMeta;
 
 public class Central extends JavaPlugin {
 	PlayerCommands playerComs;
@@ -14,6 +15,8 @@ public class Central extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		saveDefaultConfig();
+		new SimpleMeta(this);
 		playerComs = new PlayerCommands(this);
 		adminComs = new AdminCommands(this);
 	}
@@ -28,23 +31,33 @@ public class Central extends JavaPlugin {
 			if (args.length > 0) {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
-					if (player.hasMetadata("killshotteams.hasteam")) {
-						if (player.getMetadata("killshotteams.hasteam.ownsteam").get(0).asBoolean()) {
-							adminComs.onCommand(sender, command, label, args);
-							player.sendMessage("Transfered Main --> admin");
-							return true;
+					if (checkPermissions(player, "t")) {
+						if (player.hasMetadata("killshotteams.hasteam")) {
+							if (player.getMetadata("killshotteams.hasteam.ownsteam").get(0).asBoolean()) {
+								adminComs.onCommand(sender, command, label, args);
+								return true;
+							} else {
+								playerComs.onCommand(sender, command, label, args);
+								return true;
+							}
 						} else {
 							playerComs.onCommand(sender, command, label, args);
-							player.sendMessage("Transfered Main --> player");
 							return true;
 						}
-					} else {
-						playerComs.onCommand(sender, command, label, args);
-						player.sendMessage("Transfered Main --> player");
-						return true;
 					}
 				}
 			}
+		}
+		return false;
+	}
+
+	public boolean checkPermissions(Player player, String command) {
+		if (player.hasPermission("killshotteams.*")) return true;
+		switch (command) {
+		case "t":
+			return player.hasPermission("killshotteams.help");
+		case "create":
+			return player.hasPermission("killshotteams.create");
 		}
 		return false;
 	}
