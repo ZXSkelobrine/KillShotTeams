@@ -32,6 +32,11 @@ public class Central extends JavaPlugin {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (args.length > 0) {
+					if (args[0].equals("deb")) {
+						this.getLogger().info(player.getMetadata(args[1]).size() + "");
+						this.getLogger().info(player.getMetadata(args[1]).get(0).asString());
+						this.getLogger().info(player.getMetadata(args[1]).get(0).asBoolean() + "");
+					}
 					if (checkPermissions(player, "t")) {
 						if (player.hasMetadata("killshotteams.hasteam")) {
 							if (player.getMetadata("killshotteams.hasteam.ownsteam").get(0).asBoolean()) {

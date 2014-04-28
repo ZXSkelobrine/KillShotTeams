@@ -2,7 +2,9 @@ package com.github.ZXSkelobrine.KillShot.teams.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -54,7 +56,7 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 						String offPassword = (String) plugin.getConfig().get("teams." + name + ".pass");
 						if (password.equals(offPassword)) {
 							List<String> current = plugin.getConfig().getStringList("teams." + name + ".members");
-							current.add(player.getName());
+							current.add(player.getUniqueId().toString());
 							SimpleMeta.addListToConfig("teams." + name + ".members", current);
 							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, plugin);
 							super.message(player, "You have successfully joined the " + name + " team!");
@@ -71,7 +73,21 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 			}
 		}
 		if (args[0].equalsIgnoreCase("leave")) {
-			super.message(sender, ((Player) sender).getMetadata("killshotteams.hasteam.team").get(0).asString());
+			if (sender instanceof Player) {
+				Player player = (Player) sender;
+				if (player.hasMetadata("killshotteams.hasteam")) {
+					String team = player.getMetadata("killshotteams.hasteam.team").get(0).asString();
+					List<String> uuids = plugin.getConfig().getStringList("teams." + team + ".members");
+					for (String uuid : uuids) {
+						if (player.getUniqueId().equals(uuid)) uuids.remove(uuid);
+					}
+					plugin.getConfig().set("teams." + team + ".members", uuids);
+					for (String uuid : uuids) {
+						super.message(Bukkit.getPlayer(UUID.fromString(uuid)), "Player " + player.getName() + " has left your team!");
+					}
+					super.message(player, "You have successfully left " + team);
+				}
+			}
 		}
 		return false;
 	}

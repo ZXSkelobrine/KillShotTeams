@@ -1,6 +1,7 @@
 package com.github.ZXSkelobrine.KillShot.teams.commands;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -39,14 +40,14 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 							super.plugin.getConfig().set("teams." + name + ".pass", null);
 							super.plugin.getConfig().set("teams." + name + ".name", null);
 							super.plugin.getConfig().set("teams." + name, null);
-							List<String> current = plugin.getConfig().getStringList("teams." + name + ".members");
 							SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam", false, plugin);
 							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", null, plugin);
 							SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam.ownsteam", false, plugin);
 							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.name", null, plugin);
 							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.pass", null, plugin);
+							List<String> current = plugin.getConfig().getStringList("teams." + name + ".members");
 							for (String pl : current) {
-								Player now = Bukkit.getPlayer(pl);
+								Player now = Bukkit.getPlayer(UUID.fromString(pl));
 								SimpleMeta.setBooleanMetadata(now, "killshotteams.hasteam", false, plugin);
 								SimpleMeta.setStringnMetadata(now, "killshotteams.hasteam.team", null, plugin);
 							}
