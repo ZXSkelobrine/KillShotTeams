@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.ZXSkelobrine.KillShot.teams.commands.AdminCommands;
 import com.github.ZXSkelobrine.KillShot.teams.commands.PlayerCommands;
+import com.github.ZXSkelobrine.KillShot.teams.general.TeamsPlugin;
 import com.github.ZXSkelobrine.KillShot.teams.metadata.SimpleMeta;
 
 public class Central extends JavaPlugin {
@@ -28,9 +29,9 @@ public class Central extends JavaPlugin {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (command.getName().equalsIgnoreCase("t")) {
-			if (args.length > 0) {
-				if (sender instanceof Player) {
-					Player player = (Player) sender;
+			if (sender instanceof Player) {
+				Player player = (Player) sender;
+				if (args.length > 0) {
 					if (checkPermissions(player, "t")) {
 						if (player.hasMetadata("killshotteams.hasteam")) {
 							if (player.getMetadata("killshotteams.hasteam.ownsteam").get(0).asBoolean()) {
@@ -45,6 +46,8 @@ public class Central extends JavaPlugin {
 							return true;
 						}
 					}
+				} else {
+					new TeamsPlugin(this).printHelp(player);
 				}
 			}
 		}

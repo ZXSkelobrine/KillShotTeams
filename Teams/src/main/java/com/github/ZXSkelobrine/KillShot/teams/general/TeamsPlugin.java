@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 
 public class TeamsPlugin {
 	protected static Plugin plugin;
+	String[] help = new String[] { ChatColor.GREEN + "KillShot Teams Help: (Light gray are player commands, Dark gray are owner commands.", ChatColor.GRAY + "/t - Prints this message.", ChatColor.GRAY + "/t create [name] [password] - Creates a team with the given name and password.", ChatColor.GRAY + "/t info [name] - Shows info about a given team.", ChatColor.GRAY + "/t chat - Toggles team chat.", ChatColor.GRAY + "/t hq - Teleports to the team hq.", ChatColor.GRAY + "/t rally - Teleports  to the rally point.", ChatColor.DARK_GRAY + "/t password [password] - Sets the password for the the team.", ChatColor.DARK_GRAY + "/t kick [player] - Kicks a player from the team.", ChatColor.DARK_GRAY + "/t ff [on/off] - Toggles " + ChatColor.ITALIC + "'friendly fire'" + ChatColor.RESET + ChatColor.GRAY + " (team damage).", ChatColor.DARK_GRAY + "/t promote [player] - Promotes a player to manager.", ChatColor.DARK_GRAY + "/t demote [player] - Demotes a player from manager.", ChatColor.DARK_GRAY + "/t sethq - Sets the HQ point for the team.", ChatColor.DARK_GRAY + "/t setrally - Sets the rally point for the team." };
 
 	public TeamsPlugin(Plugin plugin) {
 		TeamsPlugin.plugin = plugin;
@@ -25,5 +26,9 @@ public class TeamsPlugin {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			player.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "[KillShotTeams] " + ChatColor.RESET + ChatColor.GREEN + message);
 		}
+	}
+
+	public void printHelp(Player player) {
+		player.sendMessage(help);
 	}
 }

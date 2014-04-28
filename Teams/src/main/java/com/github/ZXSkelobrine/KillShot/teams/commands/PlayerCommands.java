@@ -9,10 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.IUser;
-import com.earth2me.essentials.User;
-import com.earth2me.essentials.UserData;
 import com.github.ZXSkelobrine.KillShot.teams.general.TeamsPlugin;
 import com.github.ZXSkelobrine.KillShot.teams.metadata.SimpleMeta;
 
@@ -73,6 +69,9 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 			} else {
 				super.message(sender, "You must be a player to do that.");
 			}
+		}
+		if(args[1].equalsIgnoreCase("leave")){
+			
 		}
 		return false;
 	}
