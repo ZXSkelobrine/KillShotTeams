@@ -44,7 +44,7 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 				super.message(sender, "You must be a player to do that.");
 			}
 		}
-		if (args[1].equalsIgnoreCase("join")) {
+		if (args[0].equalsIgnoreCase("join")) {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (args.length == 3) {
@@ -70,8 +70,8 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 				super.message(sender, "You must be a player to do that.");
 			}
 		}
-		if(args[1].equalsIgnoreCase("leave")){
-			
+		if (args[0].equalsIgnoreCase("leave")) {
+			super.message(sender, ((Player) sender).getMetadata("killshotteams.hasteam.team").get(0).asString());
 		}
 		return false;
 	}

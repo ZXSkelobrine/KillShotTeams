@@ -41,4 +41,12 @@ public class SimpleMeta extends TeamsPlugin {
 	public static void addListToConfig(String key, List<String> values) {
 		plugin.getConfig().set(key, values);
 	}
+
+	public static void saveConfig() {
+		try {
+			plugin.getConfig().save(new File(new File("plugins/KillShotTeams/config.yml").getAbsolutePath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

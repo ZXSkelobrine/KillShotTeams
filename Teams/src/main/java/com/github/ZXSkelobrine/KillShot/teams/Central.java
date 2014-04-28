@@ -48,6 +48,7 @@ public class Central extends JavaPlugin {
 					}
 				} else {
 					new TeamsPlugin(this).printHelp(player);
+					return true;
 				}
 			}
 		}
