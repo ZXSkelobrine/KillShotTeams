@@ -31,15 +31,13 @@ public class SimpleMeta extends TeamsPlugin {
 	public static void addConfig(String key, String value) {
 		plugin.getConfig().createSection(key);
 		plugin.getConfig().set(key, value);
-		try {
-			plugin.getConfig().save(new File(new File("plugins/KillShotTeams/config.yml").getAbsolutePath()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		saveConfig();
 	}
 
 	public static void addListToConfig(String key, List<String> values) {
+		if (!plugin.getConfig().contains(key)) plugin.getConfig().createSection(key);
 		plugin.getConfig().set(key, values);
+		saveConfig();
 	}
 
 	public static void saveConfig() {

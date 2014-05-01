@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import com.github.ZXSkelobrine.KillShot.teams.Central;
 import com.github.ZXSkelobrine.KillShot.teams.general.TeamsPlugin;
 import com.github.ZXSkelobrine.KillShot.teams.metadata.SimpleMeta;
 
@@ -28,8 +29,7 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 					super.message(sender, "Sorry, you are already the owner of a team. If you would like to create a new one please disband your team first");
 					return true;
 				}
-			}
-			if (args[0].equalsIgnoreCase("disband")) {
+			} else if (args[0].equalsIgnoreCase("disband")) {
 				if (args.length == 3) {
 					String name = args[1];
 					String password = args[2];
@@ -63,6 +63,8 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 				} else {
 					super.message(sender, "Invalid arguments. Please format command as so /t disband [Team Name] [Password]");
 				}
+			} else {
+				Central.playerComs.onCommand(sender, command, label, args, true);
 			}
 		}
 		return false;

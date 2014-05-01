@@ -8,16 +8,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.github.ZXSkelobrine.KillShot.teams.commands.AdminCommands;
 import com.github.ZXSkelobrine.KillShot.teams.commands.PlayerCommands;
 import com.github.ZXSkelobrine.KillShot.teams.general.TeamsPlugin;
+import com.github.ZXSkelobrine.KillShot.teams.listeners.KillShotListeners;
 import com.github.ZXSkelobrine.KillShot.teams.metadata.SimpleMeta;
 
 public class Central extends JavaPlugin {
-	PlayerCommands playerComs;
-	AdminCommands adminComs;
+	public static PlayerCommands playerComs;
+	public static AdminCommands adminComs;
 
 	@Override
 	public void onEnable() {
 		saveDefaultConfig();
 		new SimpleMeta(this);
+		getServer().getPluginManager().registerEvents(new KillShotListeners(this), this);
 		playerComs = new PlayerCommands(this);
 		adminComs = new AdminCommands(this);
 	}
@@ -43,11 +45,11 @@ public class Central extends JavaPlugin {
 								adminComs.onCommand(sender, command, label, args);
 								return true;
 							} else {
-								playerComs.onCommand(sender, command, label, args);
+								playerComs.onCommand(sender, command, label, args, false);
 								return true;
 							}
 						} else {
-							playerComs.onCommand(sender, command, label, args);
+							playerComs.onCommand(sender, command, label, args, false);
 							return true;
 						}
 					}

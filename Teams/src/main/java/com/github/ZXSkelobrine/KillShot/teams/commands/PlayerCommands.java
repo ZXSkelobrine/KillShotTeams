@@ -1,27 +1,30 @@
 package com.github.ZXSkelobrine.KillShot.teams.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 
 import com.github.ZXSkelobrine.KillShot.teams.general.TeamsPlugin;
 import com.github.ZXSkelobrine.KillShot.teams.metadata.SimpleMeta;
 
-public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
+public class PlayerCommands extends TeamsPlugin {
 
 	public PlayerCommands(Plugin plugin) {
 		super(plugin);
 	}
 
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (args[0].equalsIgnoreCase("create")) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args, boolean fallThrough) {
+		if (args[0].equalsIgnoreCase("create") && !fallThrough) {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (args.length == 3) {
@@ -36,7 +39,7 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 					SimpleMeta.addConfig("teams." + name + ".pass", password);
 					SimpleMeta.addConfig("teams." + name + ".owner", player.getName());
 					List<String> names = new ArrayList<>();
-					names.add(player.getName());
+					names.add(player.getUniqueId().toString());
 					SimpleMeta.addListToConfig("teams." + name + ".members", names);
 					super.message(player, "Team " + name + " has been create with the password: " + password);
 				} else {
@@ -46,7 +49,7 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 				super.message(sender, "You must be a player to do that.");
 			}
 		}
-		if (args[0].equalsIgnoreCase("join")) {
+		if (args[0].equalsIgnoreCase("join") && !fallThrough) {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (args.length == 3) {
@@ -60,7 +63,7 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 							SimpleMeta.addListToConfig("teams." + name + ".members", current);
 							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, plugin);
 							super.message(player, "You have successfully joined the " + name + " team!");
-							plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "nick " + player.getName() + " [" + name + "]" + player.getCustomName());
+							plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "nick " + player.getName() + " [" + name + "]" + player.getDisplayName());
 						}
 					} catch (Exception e) {
 						super.message(player, "There doesn't seem to be a team with that name!");
@@ -72,7 +75,7 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 				super.message(sender, "You must be a player to do that.");
 			}
 		}
-		if (args[0].equalsIgnoreCase("leave")) {
+		if (args[0].equalsIgnoreCase("leave") && !fallThrough) {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (player.hasMetadata("killshotteams.hasteam")) {
@@ -86,6 +89,55 @@ public class PlayerCommands extends TeamsPlugin implements CommandExecutor {
 						super.message(Bukkit.getPlayer(UUID.fromString(uuid)), "Player " + player.getName() + " has left your team!");
 					}
 					super.message(player, "You have successfully left " + team);
+				} else {
+					super.message(player, "You must be part of a team");
+				}
+			} else {
+				super.message(sender, "You must be player");
+			}
+		}
+		if (args[0].equalsIgnoreCase("info")) {
+			if (args.length == 2) {
+				if (sender instanceof Player) {
+					Player player = (Player) sender;
+					String team = args[1];
+					String baseAddress = "teams." + team;
+
+					String name = plugin.getConfig().getString(baseAddress + ".name");
+					String owner = plugin.getConfig().getString(baseAddress + ".owner");
+					List<String> membersUUIDS = plugin.getConfig().getStringList(baseAddress + ".members");
+					List<String> memberNames = new ArrayList<String>();
+					for (String s : membersUUIDS) {
+						memberNames.add(Bukkit.getPlayer(UUID.fromString(s)).getDisplayName());
+					}
+					List<String> message = new ArrayList<>();
+					message.add(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "[KillShot Teams]" + ChatColor.RESET + ChatColor.GREEN + "Team info");
+					message.add(ChatColor.GRAY + "Team name: " + name);
+					message.add(ChatColor.GRAY + "Team owner: " + owner);
+					message.add(ChatColor.GRAY + "Team members: ");
+					for (String s : memberNames) {
+						message.add(ChatColor.GRAY + s);
+					}
+					String[] toSend = new String[message.size()];
+					message.toArray(toSend);
+					player.sendMessage(toSend);
+				}
+			}
+		}
+		if (args[0].equalsIgnoreCase("chat")) {
+			if (sender instanceof Player) {
+				Player player = (Player) sender;
+				if (player.hasMetadata("killshotteam.hasteam.hasteamchat.ison")) {
+					if (player.getMetadata("killshotteam.hasteam.hasteamchat.ison").get(0).asBoolean()) {
+						SimpleMeta.setBooleanMetadata(player, "killshotteam.hasteam.hasteamchat.ison", false, plugin);
+						super.message(player, "Team chat has been disabled");
+					} else {
+						SimpleMeta.setBooleanMetadata(player, "killshotteam.hasteam.hasteamchat.ison", true, plugin);
+						super.message(player, "Team chat has been enabled");
+					}
+				} else {
+					player.setMetadata("killshotteam.hasteam.hasteamchat.ison", new FixedMetadataValue(plugin, true));
+					super.message(player, "Team chat has been enabled");
 				}
 			}
 		}
