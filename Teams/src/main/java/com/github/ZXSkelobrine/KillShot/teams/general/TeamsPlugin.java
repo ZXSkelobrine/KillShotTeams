@@ -31,4 +31,29 @@ public class TeamsPlugin {
 	public void printHelp(Player player) {
 		player.sendMessage(help);
 	}
+
+	public boolean checkPermissions(Player player, String command) {
+		if (player.hasPermission("killshotteams.*")) return true;
+		switch (command) {
+		case "t":
+			return player.hasPermission("killshotteams.help");
+		case "create":
+			return player.hasPermission("killshotteams.create");
+		case "join":
+			return player.hasPermission("killshotteams.join");
+		case "leave":
+			return player.hasPermission("killshotteams.leave");
+		case "info":
+			return player.hasPermission("killshotteams.info");
+		case "chat":
+			return player.hasPermission("killshotteams.chat");
+		case "hq":
+			return player.hasPermission("killshotteams.hq");
+		case "disband":
+			return player.hasPermission("killshotteams.disband");
+		case "sethq":
+			return player.hasPermission("killshotteams.sethq");
+		}
+		return false;
+	}
 }

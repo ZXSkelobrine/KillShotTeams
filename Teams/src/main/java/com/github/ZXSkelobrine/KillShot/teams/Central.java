@@ -14,6 +14,7 @@ import com.github.ZXSkelobrine.KillShot.teams.metadata.SimpleMeta;
 public class Central extends JavaPlugin {
 	public static PlayerCommands playerComs;
 	public static AdminCommands adminComs;
+	public TeamsPlugin teams = new TeamsPlugin(this);
 
 	@Override
 	public void onEnable() {
@@ -39,7 +40,7 @@ public class Central extends JavaPlugin {
 						this.getLogger().info(player.getMetadata(args[1]).get(0).asString());
 						this.getLogger().info(player.getMetadata(args[1]).get(0).asBoolean() + "");
 					}
-					if (checkPermissions(player, "t")) {
+					if (teams.checkPermissions(player, "t")) {
 						if (player.hasMetadata("killshotteams.hasteam")) {
 							if (player.getMetadata("killshotteams.hasteam.ownsteam").get(0).asBoolean()) {
 								adminComs.onCommand(sender, command, label, args);
@@ -62,14 +63,4 @@ public class Central extends JavaPlugin {
 		return false;
 	}
 
-	public boolean checkPermissions(Player player, String command) {
-		if (player.hasPermission("killshotteams.*")) return true;
-		switch (command) {
-		case "t":
-			return player.hasPermission("killshotteams.help");
-		case "create":
-			return player.hasPermission("killshotteams.create");
-		}
-		return false;
-	}
 }
