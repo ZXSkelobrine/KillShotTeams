@@ -49,10 +49,14 @@ public class TeamsPlugin {
 			return player.hasPermission("killshotteams.chat");
 		case "hq":
 			return player.hasPermission("killshotteams.hq");
+		case "rally":
+			return player.hasPermission("killshotteams.rally");
 		case "disband":
 			return player.hasPermission("killshotteams.disband");
 		case "sethq":
 			return player.hasPermission("killshotteams.sethq");
+		case "setrally":
+			return player.hasPermission("killshotteams.setrally");
 		}
 		return false;
 	}

@@ -15,6 +15,10 @@ permissions:
       killshotteams.leave: true
       killshotteams.info: true
       killshotteams.chat: true
+      killshotteams.hq: true
+      killshotteams.disband: true
+      killshotteams.sethq: true
+      killshotteams.setrally: true
     default: false
   killshotteams.help:
     description: Gives access to the help command.
@@ -37,9 +41,15 @@ permissions:
   killshotteams.hq:
     description: Gives access to the hq command.
     default: false
+  killshotteams.rally:
+    description: Gives access to the rally command.
+    default: false
   killshotteams.disband:
     description: Gives access to the disband command.
     default: false
   killshotteams.sethq:
     description: Gives access to the sethq command.
+    default: false
+  killshotteams.setrally:
+    description: Gives access to the setrally command.
     default: false

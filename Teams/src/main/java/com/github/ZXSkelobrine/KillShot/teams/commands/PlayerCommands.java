@@ -193,6 +193,33 @@ public class PlayerCommands extends TeamsPlugin {
 				super.message(sender, "You must be player to do that.");
 			}
 		}
+		if (args[0].equalsIgnoreCase("rally")) {
+			if (sender instanceof Player) {
+				Player player = (Player) sender;
+				if (super.checkPermissions(player, "rally")) {
+					if (player.hasMetadata("killshotteams.hasteam.team")) {
+						String team = player.getMetadata("killshotteams.hasteam.team").get(0).asString();
+						List<String> location = plugin.getConfig().getStringList("teams." + team + ".rallyloc");
+						double x = Double.parseDouble(location.get(0));
+						double y = Double.parseDouble(location.get(1));
+						double z = Double.parseDouble(location.get(2));
+						String worldName = plugin.getConfig().getString("teams." + team + ".rallyworld");
+						Location rally = new Location(plugin.getServer().getWorld(worldName), x, y, z);
+						if (player.teleport(rally)) {
+							super.message(player, "Successfully teleported to the rally point");
+						} else {
+							super.message(player, "Failed to teleport to the rally point");
+						}
+					} else {
+						super.message(player, "You are not part of a team");
+					}
+				} else {
+					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.rally)");
+				}
+			} else {
+				super.message(sender, "You must be player to do that.");
+			}
+		}
 		return false;
 	}
 }

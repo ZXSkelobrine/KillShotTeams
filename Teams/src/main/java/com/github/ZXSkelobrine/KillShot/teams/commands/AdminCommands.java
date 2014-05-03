@@ -65,7 +65,6 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 							} else {
 								super.message(sender, "You have either enter the name or password incorrectly or you are not the owner of this team.");
 							}
-
 						} catch (Exception e) {
 							super.message(sender, "Something has gone wrong!");
 						}
@@ -93,6 +92,24 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 					super.message(player, "Successfully set the team HQ point!");
 				} else {
 					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.sethq)");
+				}
+			} else if (args[0].equalsIgnoreCase("setrally")) {
+				if (super.checkPermissions(player, "setrally")) {
+					String team = player.getMetadata("killshotteams.hasteam.ownsteam.name").get(0).asString();
+					Location newRally = player.getLocation();
+					String x = String.valueOf(newRally.getX());
+					String y = String.valueOf(newRally.getY());
+					String z = String.valueOf(newRally.getZ());
+					List<String> location = new ArrayList<String>();
+					location.add(x);
+					location.add(y);
+					location.add(z);
+					SimpleMeta.addListToConfig("teams." + team + ".rallyloc", location);
+					String world = newRally.getWorld().getName();
+					SimpleMeta.addConfig("teams." + team + ".rallyworld", world);
+					super.message(player, "Successfully set the team rally point!");
+				} else {
+					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.setrally)");
 				}
 			} else {
 				Central.playerComs.onCommand(sender, command, label, args, true);
