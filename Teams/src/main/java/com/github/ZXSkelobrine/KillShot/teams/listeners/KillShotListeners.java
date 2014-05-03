@@ -39,6 +39,7 @@ public class KillShotListeners extends TeamsPlugin implements Listener {
 		}
 	}
 
+	@EventHandler
 	public void onPlayerDamageEvent(EntityDamageByEntityEvent event) {
 		if (event.getDamager() instanceof Player) {
 			Player damager = (Player) event.getDamager();
