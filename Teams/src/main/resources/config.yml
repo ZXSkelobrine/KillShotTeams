@@ -1,5 +1,15 @@
+#Ignore this - it is just so that if the plugin is updated I have a way to go through and reset all of the players and owners
+allteams:
+  - tester
+#This will change whether the team names are included in the chat messages.
+addTeam: true
+#This is a list of teams that are currently on the server.
+#The tester one is just an example of how to format a team if you are adding one yourself from config 
+#I wouldn't - just do it ingame. If you mess up the UUIDs it will not work at all.
 teams:
     tester:
         name: player1steam
         pass: testpass
-        owner: player1
+        owner: 0de21fee-c006-41b2-b6a0-354b20e0ec52
+        members:
+        - 0de21fee-c006-41b2-b6a0-354b20e0ec52

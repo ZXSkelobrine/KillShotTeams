@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
 import com.github.ZXSkelobrine.KillShot.teams.general.TeamsPlugin;
@@ -24,9 +25,10 @@ public class KillShotListeners extends TeamsPlugin implements Listener {
 	@EventHandler
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
+		if (plugin.getConfig().getBoolean("addTeam")) event.setMessage(ChatColor.BLACK + "" + ChatColor.ITALIC + "[" + SimpleMeta.getPlayerTeam(player) + "]" + ":    " + ChatColor.RESET + event.getMessage());
 		if (player.hasMetadata("killshotteam.hasteam.hasteamchat.ison")) {
 			if (player.getMetadata("killshotteam.hasteam.hasteamchat.ison").get(0).asBoolean()) {
-				String teamKey = "teams." + plugin.getConfig().getString("killshotteams.hasteam.team") + ".members";
+				String teamKey = "teams." + SimpleMeta.getPlayerTeam(player) + ".members";
 				List<String> players = plugin.getConfig().getStringList(teamKey);
 				plugin.getLogger().info(players.size() + "");
 				for (String s : players) {
@@ -56,4 +58,62 @@ public class KillShotListeners extends TeamsPlugin implements Listener {
 			}
 		}
 	}
+
+	@EventHandler
+	public void onPlayerJoinEvent(PlayerJoinEvent event) {
+		List<String> teams = plugin.getConfig().getStringList("allteams");
+		for (String team : teams) {
+			String baseAddress = "teams." + team;
+			String playerUUID = plugin.getConfig().getString("teams." + team + ".owner");
+			if (event.getPlayer().getUniqueId().equals(UUID.fromString(playerUUID))) {
+				Player player = event.getPlayer();
+				String name = plugin.getConfig().getString(baseAddress + ".name");
+				String password = plugin.getConfig().getString(baseAddress + ".pass");
+				SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam", true, plugin);
+				SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, plugin);
+				SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam.ownsteam", true, plugin);
+				SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.name", name, plugin);
+				SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.pass", password, plugin);
+				plugin.getLogger().info("Set team: " + team + " metadata to owner: " + player.getDisplayName());
+			}
+			List<String> players = plugin.getConfig().getStringList(baseAddress + ".members");
+			for (String player : players) {
+				if (event.getPlayer().getUniqueId().toString().equals(player)) {
+					String name = plugin.getConfig().getString(baseAddress + ".name");
+					SimpleMeta.setStringnMetadata(event.getPlayer(), "killshotteams.hasteam.team", name, plugin);
+				}
+			}
+		}
+	}
+
 }
+/**
+ * 
+ * <pre>
+ * List<String> teams = getConfig().getStringList("allteams");
+ * 		if (teams.size() > 1) {
+ * 			Player secondOwner = Bukkit.getPlayer(UUID.fromString(getConfig().getString("teams." + teams.get(1) + ".owner")));
+ * 			if (!secondOwner.hasMetadata("killshotteams.hasteam.ownsteam")) {
+ * 				getLogger().warning("Updated Detected: setting metadatas. Prepare for lag - this could take a while!");
+ * 				for (String team : teams) {
+ * 					String baseAddress = "teams." + team;
+ * 					Player player = Bukkit.getPlayer(UUID.fromString(getConfig().getString(baseAddress + ".owner")));
+ * 					String name = getConfig().getString(baseAddress + ".name");
+ * 					String password = getConfig().getString(baseAddress + ".pass");
+ * 					SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam", true, this);
+ * 					SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, this);
+ * 					SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam.ownsteam", true, this);
+ * 					SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.name", name, this);
+ * 					SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.pass", password, this);
+ * 					List<String> players = getConfig().getStringList(baseAddress + ".members");
+ * 					for (String memberUUID : players) {
+ * 						Player member = Bukkit.getPlayer(UUID.fromString(memberUUID));
+ * 						SimpleMeta.setStringnMetadata(member, "killshotteams.hasteam.team", name, this);
+ * 					}
+ * 					getLogger().info("Set team: " + team + " metadata to owner: " + player.getDisplayName());
+ * 				}
+ * 			}
+ * }
+ * 
+ * <pre>
+ */

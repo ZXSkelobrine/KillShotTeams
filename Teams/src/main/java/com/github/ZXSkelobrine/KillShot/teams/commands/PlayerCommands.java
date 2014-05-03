@@ -28,20 +28,33 @@ public class PlayerCommands extends TeamsPlugin {
 				Player player = (Player) sender;
 				if (super.checkPermissions(player, "create")) {
 					if (args.length == 3) {
+						List<String> teams = plugin.getConfig().getStringList("allteams");
 						String name = args[1];
-						String password = args[2];
-						SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam", true, plugin);
-						SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, plugin);
-						SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam.ownsteam", true, plugin);
-						SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.name", name, plugin);
-						SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.pass", password, plugin);
-						SimpleMeta.addConfig("teams." + name + ".name", name);
-						SimpleMeta.addConfig("teams." + name + ".pass", password);
-						SimpleMeta.addConfig("teams." + name + ".owner", player.getName());
-						List<String> names = new ArrayList<>();
-						names.add(player.getUniqueId().toString());
-						SimpleMeta.addListToConfig("teams." + name + ".members", names);
-						super.message(player, "Team " + name + " has been create with the password: " + password);
+						boolean contin = true;
+						for (String team : teams) {
+							if (name.equalsIgnoreCase(team)) {
+								contin = false;
+							}
+						}
+						if (contin) {
+							String password = args[2];
+							SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam", true, plugin);
+							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, plugin);
+							SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam.ownsteam", true, plugin);
+							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.name", name, plugin);
+							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.pass", password, plugin);
+							SimpleMeta.addConfig("teams." + name + ".name", name);
+							SimpleMeta.addConfig("teams." + name + ".pass", password);
+							SimpleMeta.addConfig("teams." + name + ".owner", player.getUniqueId().toString());
+							teams.add(name);
+							SimpleMeta.addListToConfig("allteams", teams);
+							List<String> names = new ArrayList<>();
+							names.add(player.getUniqueId().toString());
+							SimpleMeta.addListToConfig("teams." + name + ".members", names);
+							super.message(player, "Team " + name + " has been create with the password: " + password);
+						} else {
+							super.message(player, "There is already another team with that name!");
+						}
 					} else {
 						super.message(player, "You must specify and name and password as so: /t create [Team Name] [Password]");
 					}
@@ -67,7 +80,7 @@ public class PlayerCommands extends TeamsPlugin {
 								SimpleMeta.addListToConfig("teams." + name + ".members", current);
 								SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, plugin);
 								super.message(player, "You have successfully joined the " + name + " team!");
-								plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "nick " + player.getName() + " [" + name + "]" + player.getDisplayName());
+								plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "nick " + player.getName() + " (" + name + "]" + player.getDisplayName());
 							}
 						} catch (Exception e) {
 							super.message(player, "There doesn't seem to be a team with that name!");
@@ -219,6 +232,9 @@ public class PlayerCommands extends TeamsPlugin {
 			} else {
 				super.message(sender, "You must be player to do that.");
 			}
+		}
+		if (args[0].equals("UUID")) {
+			super.message(((Player) sender), ((Player) sender).getUniqueId().toString());
 		}
 		return false;
 	}
