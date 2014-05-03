@@ -8,10 +8,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 
 import com.github.ZXSkelobrine.KillShot.teams.general.TeamsPlugin;
+import com.github.ZXSkelobrine.KillShot.teams.metadata.SimpleMeta;
 
 public class KillShotListeners extends TeamsPlugin implements Listener {
 
@@ -34,6 +36,23 @@ public class KillShotListeners extends TeamsPlugin implements Listener {
 			} else {
 			}
 		} else {
+		}
+	}
+
+	public void onPlayerDamageEvent(EntityDamageByEntityEvent event) {
+		if (event.getDamager() instanceof Player) {
+			Player damager = (Player) event.getDamager();
+			if (event.getEntity() instanceof Player) {
+				Player damagee = (Player) event.getEntity();
+				String team1 = SimpleMeta.getPlayerTeam(damager);
+				String team2 = SimpleMeta.getPlayerTeam(damagee);
+				if (team1.equals(team2)) {
+					if (!plugin.getConfig().getBoolean("teams." + team1 + ".ff")) {
+						super.message(damager, "You cannot attack people in your team right now.");
+						event.setCancelled(true);
+					}
+				}
+			}
 		}
 	}
 }

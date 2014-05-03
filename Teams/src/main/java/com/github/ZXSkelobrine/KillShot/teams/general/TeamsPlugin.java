@@ -57,6 +57,10 @@ public class TeamsPlugin {
 			return player.hasPermission("killshotteams.sethq");
 		case "setrally":
 			return player.hasPermission("killshotteams.setrally");
+		case "password":
+			return player.hasPermission("killshotteams.password");
+		case "ff":
+			return player.hasPermission("killshotteams.ff");
 		}
 		return false;
 	}

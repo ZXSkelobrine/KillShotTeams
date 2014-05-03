@@ -53,3 +53,9 @@ permissions:
   killshotteams.setrally:
     description: Gives access to the setrally command.
     default: false
+  killshotteams.password:
+    description: Gives access to the password command.
+    default: false
+  killshotteams.ff:
+    description: Gives access to the ff command.
+    default: false

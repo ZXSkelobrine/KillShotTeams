@@ -28,8 +28,12 @@ public class SimpleMeta extends TeamsPlugin {
 		player.setMetadata(key, new FixedMetadataValue(plugin, value));
 	}
 
+	public static String getPlayerTeam(Player player) {
+		return player.getMetadata("killshotteams.hasteam.team").get(0).asString();
+	}
+
 	public static void addConfig(String key, String value) {
-		plugin.getConfig().createSection(key);
+		if (!plugin.getConfig().contains(key)) plugin.getConfig().createSection(key);
 		plugin.getConfig().set(key, value);
 		saveConfig();
 	}
@@ -37,6 +41,12 @@ public class SimpleMeta extends TeamsPlugin {
 	public static void addListToConfig(String key, List<String> values) {
 		if (!plugin.getConfig().contains(key)) plugin.getConfig().createSection(key);
 		plugin.getConfig().set(key, values);
+		saveConfig();
+	}
+
+	public static void addBooleanToConfig(String key, boolean value) {
+		if (!plugin.getConfig().contains(key)) plugin.getConfig().createSection(key);
+		plugin.getConfig().set(key, value);
 		saveConfig();
 	}
 

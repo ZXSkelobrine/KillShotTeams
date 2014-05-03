@@ -111,10 +111,47 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 				} else {
 					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.setrally)");
 				}
+			} else if (args[0].equalsIgnoreCase("password")) {
+				if (super.checkPermissions(player, "password")) {
+					if (args.length == 2) {
+						String team = player.getMetadata("killshotteams.hasteam.ownsteam.name").get(0).asString();
+						SimpleMeta.addConfig("teams." + team + ".pass", args[1]);
+						super.message(player, "Successfully updated the password.");
+					}
+				} else {
+					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.password)");
+				}
+			} else if (args[0].equalsIgnoreCase("ff")) {
+				if (super.checkPermissions(player, "ff")) {
+					String team = SimpleMeta.getPlayerTeam(player);
+					if (plugin.getConfig().getBoolean("teams." + team + ".ff")) {
+						SimpleMeta.addBooleanToConfig("teams." + team + ".ff", false);
+						super.message(player, "Team damage has been " + ChatColor.BOLD + "disabled");
+					} else {
+						SimpleMeta.addBooleanToConfig("teams." + team + ".ff", true);
+						super.message(player, "Team damage has been " + ChatColor.BOLD + "enabled");
+					}
+				} else {
+					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.ff)");
+				}
 			} else {
 				Central.playerComs.onCommand(sender, command, label, args, true);
 			}
 		}
 		return false;
+	}
+
+	public Boolean canParseBoolean(String s) {
+		return s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
+	}
+
+	public Boolean parseBoolean(String s) {
+		if (s.equalsIgnoreCase("true")) {
+			return true;
+		} else if (s.equalsIgnoreCase("false")) {
+			return false;
+		} else {
+			return null;
+		}
 	}
 }
