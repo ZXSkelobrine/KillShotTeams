@@ -23,7 +23,7 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 		super(plugin);
 	}
 
-	@SuppressWarnings("static-access")
+	@SuppressWarnings({ "static-access", "deprecation" })
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
@@ -48,16 +48,11 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 								super.plugin.getConfig().set("teams." + name + ".pass", null);
 								super.plugin.getConfig().set("teams." + name + ".name", null);
 								super.plugin.getConfig().set("teams." + name, null);
-								SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam", false, plugin);
-								SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", null, plugin);
-								SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam.ownsteam", false, plugin);
-								SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.name", null, plugin);
-								SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.pass", null, plugin);
+								SimpleMeta.removeTeam(player);
 								List<String> current = plugin.getConfig().getStringList("teams." + name + ".members");
 								for (String pl : current) {
 									Player now = Bukkit.getPlayer(UUID.fromString(pl));
-									SimpleMeta.setBooleanMetadata(now, "killshotteams.hasteam", false, plugin);
-									SimpleMeta.setStringnMetadata(now, "killshotteams.hasteam.team", null, plugin);
+									SimpleMeta.removeTeam(now);
 								}
 								SimpleMeta.saveConfig();
 								super.message(sender, "You have successfully disbanded team " + name);
@@ -77,7 +72,7 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 				return true;
 			} else if (args[0].equalsIgnoreCase("sethq")) {
 				if (super.checkPermissions(player, "sethq")) {
-					String team = player.getMetadata("killshotteams.hasteam.ownsteam.name").get(0).asString();
+					String team = SimpleMeta.getPlayerTeam(player);
 					Location newHQ = player.getLocation();
 					String x = String.valueOf(newHQ.getX());
 					String y = String.valueOf(newHQ.getY());
@@ -95,7 +90,7 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 				}
 			} else if (args[0].equalsIgnoreCase("setrally")) {
 				if (super.checkPermissions(player, "setrally")) {
-					String team = player.getMetadata("killshotteams.hasteam.ownsteam.name").get(0).asString();
+					String team = SimpleMeta.getPlayerTeam(player);
 					Location newRally = player.getLocation();
 					String x = String.valueOf(newRally.getX());
 					String y = String.valueOf(newRally.getY());
@@ -114,7 +109,7 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 			} else if (args[0].equalsIgnoreCase("password")) {
 				if (super.checkPermissions(player, "password")) {
 					if (args.length == 2) {
-						String team = player.getMetadata("killshotteams.hasteam.ownsteam.name").get(0).asString();
+						String team = SimpleMeta.getPlayerTeam(player);
 						SimpleMeta.addConfig("teams." + team + ".pass", args[1]);
 						super.message(player, "Successfully updated the password.");
 					}
@@ -134,6 +129,24 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 				} else {
 					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.ff)");
 				}
+			} else if (args[0].equalsIgnoreCase("promote")) {
+				if (args.length > 1) {
+					Player promotee = Bukkit.getPlayer(args[1]);
+					String team = SimpleMeta.getPlayerTeam(player);
+					List<String> values = plugin.getConfig().getStringList("teams." + team + ".managers");
+					values.add(promotee.getUniqueId().toString());
+					SimpleMeta.addListToConfig("teams." + team + ".managers", values);
+					super.message(player, "Promoted " + promotee.getDisplayName() + " to manager");
+					super.message(promotee, "You have been promoted by " + player.getDisplayName());
+				}
+			} else if (args[0].equalsIgnoreCase("demote")) {
+				Player demotee = Bukkit.getPlayer(args[1]);
+				String team = SimpleMeta.getPlayerTeam(player);
+				List<String> values = plugin.getConfig().getStringList("teams." + team + ".managers");
+				values.remove(demotee.getUniqueId().toString());
+				SimpleMeta.addListToConfig("teams." + team + ".managers", values);
+				super.message(player, "Demoted " + demotee.getDisplayName() + " to manager");
+				super.message(demotee, "You have been demoted by " + player.getDisplayName());
 			} else {
 				Central.playerComs.onCommand(sender, command, label, args, true);
 			}

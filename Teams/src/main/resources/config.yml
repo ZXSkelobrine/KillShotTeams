@@ -8,7 +8,7 @@ addTeam: true
 #I wouldn't - just do it ingame. If you mess up the UUIDs it will not work at all.
 teams:
     tester:
-        name: player1steam
+        name: tester
         pass: testpass
         owner: 0de21fee-c006-41b2-b6a0-354b20e0ec52
         members:

@@ -1,10 +1,5 @@
 package com.github.ZXSkelobrine.KillShot.teams;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,9 +40,18 @@ public class Central extends JavaPlugin {
 						this.getLogger().info(player.getMetadata(args[1]).get(0).asString());
 						this.getLogger().info(player.getMetadata(args[1]).get(0).asBoolean() + "");
 					}
+					if (args[0].equals("fileread")) {
+						player.sendMessage(SimpleMeta.ownsTeam(player) + "");
+						getLogger().info(SimpleMeta.ownsTeam(player) + "");
+						player.sendMessage(SimpleMeta.getPlayerTeam(player) + "");
+						getLogger().info(SimpleMeta.getPlayerTeam(player) + "");
+					}
+					if (args[0].equals("filewrite")) {
+						SimpleMeta.setPlayerTeams(player, args[1]);
+					}
 					if (teams.checkPermissions(player, "t")) {
-						if (player.hasMetadata("killshotteams.hasteam")) {
-							if (player.getMetadata("killshotteams.hasteam.ownsteam").get(0).asBoolean()) {
+						if (SimpleMeta.hasTeam(player)) {
+							if (SimpleMeta.ownsTeam(player)) {
 								adminComs.onCommand(sender, command, label, args);
 								return true;
 							} else {

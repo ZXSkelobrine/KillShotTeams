@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 
 import com.github.ZXSkelobrine.KillShot.teams.general.TeamsPlugin;
@@ -38,11 +37,7 @@ public class PlayerCommands extends TeamsPlugin {
 						}
 						if (contin) {
 							String password = args[2];
-							SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam", true, plugin);
-							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, plugin);
-							SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam.ownsteam", true, plugin);
-							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.name", name, plugin);
-							SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.pass", password, plugin);
+							SimpleMeta.setPlayerTeams(player, name);
 							SimpleMeta.addConfig("teams." + name + ".name", name);
 							SimpleMeta.addConfig("teams." + name + ".pass", password);
 							SimpleMeta.addConfig("teams." + name + ".owner", player.getUniqueId().toString());
@@ -78,7 +73,7 @@ public class PlayerCommands extends TeamsPlugin {
 								List<String> current = plugin.getConfig().getStringList("teams." + name + ".members");
 								current.add(player.getUniqueId().toString());
 								SimpleMeta.addListToConfig("teams." + name + ".members", current);
-								SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, plugin);
+								SimpleMeta.setPlayerTeams(player, name);
 								super.message(player, "You have successfully joined the " + name + " team!");
 								plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "nick " + player.getName() + " (" + name + "]" + player.getDisplayName());
 							}
@@ -99,8 +94,8 @@ public class PlayerCommands extends TeamsPlugin {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (super.checkPermissions(player, "leave")) {
-					if (player.hasMetadata("killshotteams.hasteam")) {
-						String team = player.getMetadata("killshotteams.hasteam.team").get(0).asString();
+					if (SimpleMeta.hasTeam(player)) {
+						String team = SimpleMeta.getPlayerTeam(player);
 						List<String> uuids = plugin.getConfig().getStringList("teams." + team + ".members");
 						for (String uuid : uuids) {
 							if (player.getUniqueId().equals(uuid)) uuids.remove(uuid);
@@ -160,18 +155,7 @@ public class PlayerCommands extends TeamsPlugin {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (super.checkPermissions(player, "chat")) {
-					if (player.hasMetadata("killshotteam.hasteam.hasteamchat.ison")) {
-						if (player.getMetadata("killshotteam.hasteam.hasteamchat.ison").get(0).asBoolean()) {
-							SimpleMeta.setBooleanMetadata(player, "killshotteam.hasteam.hasteamchat.ison", false, plugin);
-							super.message(player, "Team chat has been disabled");
-						} else {
-							SimpleMeta.setBooleanMetadata(player, "killshotteam.hasteam.hasteamchat.ison", true, plugin);
-							super.message(player, "Team chat has been enabled");
-						}
-					} else {
-						player.setMetadata("killshotteam.hasteam.hasteamchat.ison", new FixedMetadataValue(plugin, true));
-						super.message(player, "Team chat has been enabled");
-					}
+					SimpleMeta.changeChatStatus(player);
 				} else {
 					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.chat)");
 				}
@@ -183,18 +167,22 @@ public class PlayerCommands extends TeamsPlugin {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (super.checkPermissions(player, "hq")) {
-					if (player.hasMetadata("killshotteams.hasteam.team")) {
-						String team = player.getMetadata("killshotteams.hasteam.team").get(0).asString();
-						List<String> location = plugin.getConfig().getStringList("teams." + team + ".hqloc");
-						double x = Double.parseDouble(location.get(0));
-						double y = Double.parseDouble(location.get(1));
-						double z = Double.parseDouble(location.get(2));
-						String worldName = plugin.getConfig().getString("teams." + team + ".hqworld");
-						Location hq = new Location(plugin.getServer().getWorld(worldName), x, y, z);
-						if (player.teleport(hq)) {
-							super.message(player, "Successfully teleported to the HQ");
-						} else {
-							super.message(player, "Failed to teleport to the HQ");
+					if (SimpleMeta.hasTeam(player)) {
+						try {
+							String team = SimpleMeta.getPlayerTeam(player);
+							List<String> location = plugin.getConfig().getStringList("teams." + team + ".hqloc");
+							double x = Double.parseDouble(location.get(0));
+							double y = Double.parseDouble(location.get(1));
+							double z = Double.parseDouble(location.get(2));
+							String worldName = plugin.getConfig().getString("teams." + team + ".hqworld");
+							Location hq = new Location(plugin.getServer().getWorld(worldName), x, y, z);
+							if (player.teleport(hq)) {
+								super.message(player, "Successfully teleported to the HQ");
+							} else {
+								super.message(player, "Failed to teleport to the HQ");
+							}
+						} catch (IndexOutOfBoundsException e) {
+							super.message(player, "Your team does not have a HQ yet. Please ask your team leader to set one with /t sethq");
 						}
 					} else {
 						super.message(player, "You are not part of a team");
@@ -210,18 +198,22 @@ public class PlayerCommands extends TeamsPlugin {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (super.checkPermissions(player, "rally")) {
-					if (player.hasMetadata("killshotteams.hasteam.team")) {
-						String team = player.getMetadata("killshotteams.hasteam.team").get(0).asString();
-						List<String> location = plugin.getConfig().getStringList("teams." + team + ".rallyloc");
-						double x = Double.parseDouble(location.get(0));
-						double y = Double.parseDouble(location.get(1));
-						double z = Double.parseDouble(location.get(2));
-						String worldName = plugin.getConfig().getString("teams." + team + ".rallyworld");
-						Location rally = new Location(plugin.getServer().getWorld(worldName), x, y, z);
-						if (player.teleport(rally)) {
-							super.message(player, "Successfully teleported to the rally point");
-						} else {
-							super.message(player, "Failed to teleport to the rally point");
+					if (SimpleMeta.hasTeam(player)) {
+						try {
+							String team = SimpleMeta.getPlayerTeam(player);
+							List<String> location = plugin.getConfig().getStringList("teams." + team + ".rallyloc");
+							double x = Double.parseDouble(location.get(0));
+							double y = Double.parseDouble(location.get(1));
+							double z = Double.parseDouble(location.get(2));
+							String worldName = plugin.getConfig().getString("teams." + team + ".rallyworld");
+							Location rally = new Location(plugin.getServer().getWorld(worldName), x, y, z);
+							if (player.teleport(rally)) {
+								super.message(player, "Successfully teleported to the rally point");
+							} else {
+								super.message(player, "Failed to teleport to the rally point");
+							}
+						} catch (IndexOutOfBoundsException e) {
+							super.message(player, "Your team does not have a rally point yet. Please ask your team leader to set one with /t setrally");
 						}
 					} else {
 						super.message(player, "You are not part of a team");

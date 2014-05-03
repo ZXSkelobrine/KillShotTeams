@@ -14,15 +14,15 @@ public class TeamsPlugin {
 		TeamsPlugin.plugin = plugin;
 	}
 
-	public void message(Player player, String message) {
+	protected static void message(Player player, String message) {
 		player.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "[KillShotTeams] " + ChatColor.RESET + ChatColor.GREEN + message);
 	}
 
-	public void message(CommandSender player, String message) {
+	protected static void message(CommandSender player, String message) {
 		player.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "[KillShotTeams] " + ChatColor.RESET + ChatColor.GREEN + message);
 	}
 
-	public void broadcast(String message) {
+	protected void broadcast(String message) {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			player.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "[KillShotTeams] " + ChatColor.RESET + ChatColor.GREEN + message);
 		}

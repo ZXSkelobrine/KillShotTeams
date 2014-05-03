@@ -10,7 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
 import com.github.ZXSkelobrine.KillShot.teams.general.TeamsPlugin;
@@ -58,34 +57,6 @@ public class KillShotListeners extends TeamsPlugin implements Listener {
 			}
 		}
 	}
-
-	@EventHandler
-	public void onPlayerJoinEvent(PlayerJoinEvent event) {
-		List<String> teams = plugin.getConfig().getStringList("allteams");
-		for (String team : teams) {
-			String baseAddress = "teams." + team;
-			String playerUUID = plugin.getConfig().getString("teams." + team + ".owner");
-			if (event.getPlayer().getUniqueId().equals(UUID.fromString(playerUUID))) {
-				Player player = event.getPlayer();
-				String name = plugin.getConfig().getString(baseAddress + ".name");
-				String password = plugin.getConfig().getString(baseAddress + ".pass");
-				SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam", true, plugin);
-				SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, plugin);
-				SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam.ownsteam", true, plugin);
-				SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.name", name, plugin);
-				SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.pass", password, plugin);
-				plugin.getLogger().info("Set team: " + team + " metadata to owner: " + player.getDisplayName());
-			}
-			List<String> players = plugin.getConfig().getStringList(baseAddress + ".members");
-			for (String player : players) {
-				if (event.getPlayer().getUniqueId().toString().equals(player)) {
-					String name = plugin.getConfig().getString(baseAddress + ".name");
-					SimpleMeta.setStringnMetadata(event.getPlayer(), "killshotteams.hasteam.team", name, plugin);
-				}
-			}
-		}
-	}
-
 }
 /**
  * 
