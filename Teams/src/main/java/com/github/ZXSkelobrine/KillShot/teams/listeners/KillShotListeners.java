@@ -1,5 +1,7 @@
 package com.github.ZXSkelobrine.KillShot.teams.listeners;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
 
 import com.github.ZXSkelobrine.KillShot.teams.general.TeamsPlugin;
@@ -57,34 +60,24 @@ public class KillShotListeners extends TeamsPlugin implements Listener {
 			}
 		}
 	}
+
+	@EventHandler
+	public void onPlayerMoveEvent(PlayerMoveEvent event) {
+		if (!new File(new File("plugins/KillShotTeams/players/" + event.getPlayer().getUniqueId().toString() + ".txt").getAbsolutePath()).exists()) {
+			try {
+				new File(new File("plugins/KillShotTeams/players/" + event.getPlayer().getUniqueId().toString() + ".txt").getAbsolutePath()).createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if (SimpleMeta.isKicked(event.getPlayer())) {
+			long current = System.nanoTime();
+			long seconds = SimpleMeta.getKickTime(event.getPlayer());
+			if (current > seconds) {
+				SimpleMeta.removeKick(event.getPlayer());
+				super.message(event.getPlayer(), "Your kick has ended");
+				super.joinTeam(event.getPlayer(), SimpleMeta.getPlayerTeam(event.getPlayer()));
+			}
+		}
+	}
 }
-/**
- * 
- * <pre>
- * List<String> teams = getConfig().getStringList("allteams");
- * 		if (teams.size() > 1) {
- * 			Player secondOwner = Bukkit.getPlayer(UUID.fromString(getConfig().getString("teams." + teams.get(1) + ".owner")));
- * 			if (!secondOwner.hasMetadata("killshotteams.hasteam.ownsteam")) {
- * 				getLogger().warning("Updated Detected: setting metadatas. Prepare for lag - this could take a while!");
- * 				for (String team : teams) {
- * 					String baseAddress = "teams." + team;
- * 					Player player = Bukkit.getPlayer(UUID.fromString(getConfig().getString(baseAddress + ".owner")));
- * 					String name = getConfig().getString(baseAddress + ".name");
- * 					String password = getConfig().getString(baseAddress + ".pass");
- * 					SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam", true, this);
- * 					SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.team", name, this);
- * 					SimpleMeta.setBooleanMetadata(player, "killshotteams.hasteam.ownsteam", true, this);
- * 					SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.name", name, this);
- * 					SimpleMeta.setStringnMetadata(player, "killshotteams.hasteam.ownsteam.pass", password, this);
- * 					List<String> players = getConfig().getStringList(baseAddress + ".members");
- * 					for (String memberUUID : players) {
- * 						Player member = Bukkit.getPlayer(UUID.fromString(memberUUID));
- * 						SimpleMeta.setStringnMetadata(member, "killshotteams.hasteam.team", name, this);
- * 					}
- * 					getLogger().info("Set team: " + team + " metadata to owner: " + player.getDisplayName());
- * 				}
- * 			}
- * }
- * 
- * <pre>
- */

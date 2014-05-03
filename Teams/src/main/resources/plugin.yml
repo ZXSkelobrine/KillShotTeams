@@ -59,3 +59,6 @@ permissions:
   killshotteams.ff:
     description: Gives access to the ff command.
     default: false
+  killshotteams.kick:
+    description: Gives access to the kick command.
+    default: false

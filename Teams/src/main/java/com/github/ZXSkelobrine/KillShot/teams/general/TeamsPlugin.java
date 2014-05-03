@@ -1,10 +1,15 @@
 package com.github.ZXSkelobrine.KillShot.teams.general;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import com.github.ZXSkelobrine.KillShot.teams.metadata.SimpleMeta;
 
 public class TeamsPlugin {
 	protected static Plugin plugin;
@@ -22,7 +27,7 @@ public class TeamsPlugin {
 		player.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "[KillShotTeams] " + ChatColor.RESET + ChatColor.GREEN + message);
 	}
 
-	protected void broadcast(String message) {
+	protected static void broadcast(String message) {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			player.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "[KillShotTeams] " + ChatColor.RESET + ChatColor.GREEN + message);
 		}
@@ -30,6 +35,26 @@ public class TeamsPlugin {
 
 	public void printHelp(Player player) {
 		player.sendMessage(help);
+	}
+
+	public void joinTeam(Player player, String teamName) {
+		List<String> current = plugin.getConfig().getStringList("teams." + teamName + ".members");
+		current.add(player.getUniqueId().toString());
+		SimpleMeta.addListToConfig("teams." + teamName + ".members", current);
+		SimpleMeta.setPlayerTeams(player, teamName);
+		message(player, "You have successfully joined the " + teamName + " team!");
+	}
+
+	public void leaveTeam(Player player) {
+		String team = SimpleMeta.getPlayerTeam(player);
+		List<String> uuids = plugin.getConfig().getStringList("teams." + team + ".members");
+		uuids.remove(player.getUniqueId().toString());
+		plugin.getConfig().set("teams." + team + ".members", uuids);
+		SimpleMeta.addListToConfig("teams." + team + ".members", uuids);
+		for (String uuid : uuids) {
+			message(Bukkit.getPlayer(UUID.fromString(uuid)), "Player " + player.getName() + " has left your team!");
+		}
+		message(player, "You have successfully left " + team);
 	}
 
 	public boolean checkPermissions(Player player, String command) {
@@ -61,6 +86,8 @@ public class TeamsPlugin {
 			return player.hasPermission("killshotteams.password");
 		case "ff":
 			return player.hasPermission("killshotteams.ff");
+		case "kick":
+			return player.hasPermission("killshotteams.kick");
 		}
 		return false;
 	}

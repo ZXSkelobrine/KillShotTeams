@@ -70,12 +70,7 @@ public class PlayerCommands extends TeamsPlugin {
 						try {
 							String offPassword = (String) plugin.getConfig().get("teams." + name + ".pass");
 							if (password.equals(offPassword)) {
-								List<String> current = plugin.getConfig().getStringList("teams." + name + ".members");
-								current.add(player.getUniqueId().toString());
-								SimpleMeta.addListToConfig("teams." + name + ".members", current);
-								SimpleMeta.setPlayerTeams(player, name);
-								super.message(player, "You have successfully joined the " + name + " team!");
-								plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "nick " + player.getName() + " (" + name + "]" + player.getDisplayName());
+								super.joinTeam(player, name);
 							}
 						} catch (Exception e) {
 							super.message(player, "There doesn't seem to be a team with that name!");
@@ -95,16 +90,7 @@ public class PlayerCommands extends TeamsPlugin {
 				Player player = (Player) sender;
 				if (super.checkPermissions(player, "leave")) {
 					if (SimpleMeta.hasTeam(player)) {
-						String team = SimpleMeta.getPlayerTeam(player);
-						List<String> uuids = plugin.getConfig().getStringList("teams." + team + ".members");
-						for (String uuid : uuids) {
-							if (player.getUniqueId().equals(uuid)) uuids.remove(uuid);
-						}
-						plugin.getConfig().set("teams." + team + ".members", uuids);
-						for (String uuid : uuids) {
-							super.message(Bukkit.getPlayer(UUID.fromString(uuid)), "Player " + player.getName() + " has left your team!");
-						}
-						super.message(player, "You have successfully left " + team);
+						super.leaveTeam(player);
 					} else {
 						super.message(player, "You must be part of a team");
 					}
@@ -124,7 +110,7 @@ public class PlayerCommands extends TeamsPlugin {
 						String baseAddress = "teams." + team;
 
 						String name = plugin.getConfig().getString(baseAddress + ".name");
-						String owner = plugin.getConfig().getString(baseAddress + ".owner");
+						String owner = Bukkit.getPlayer(UUID.fromString(plugin.getConfig().getString(baseAddress + ".owner"))).getDisplayName();
 						List<String> membersUUIDS = plugin.getConfig().getStringList(baseAddress + ".members");
 						List<String> memberNames = new ArrayList<String>();
 						for (String s : membersUUIDS) {

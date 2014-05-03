@@ -43,7 +43,7 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 						String password = args[2];
 						try {
 							String offPassword = (String) plugin.getConfig().get("teams." + name + ".pass");
-							if (password.equals(offPassword) && ((Player) sender).getName().equals(plugin.getConfig().get("teams." + name + ".owner"))) {
+							if (password.equals(offPassword) && ((Player) sender).getName().equals(Bukkit.getPlayer(UUID.fromString(plugin.getConfig().getString("teams." + name + ".owner"))).getName())) {
 								super.plugin.getConfig().set("teams." + name + ".owner", null);
 								super.plugin.getConfig().set("teams." + name + ".pass", null);
 								super.plugin.getConfig().set("teams." + name + ".name", null);
@@ -147,6 +147,17 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 				SimpleMeta.addListToConfig("teams." + team + ".managers", values);
 				super.message(player, "Demoted " + demotee.getDisplayName() + " to manager");
 				super.message(demotee, "You have been demoted by " + player.getDisplayName());
+			} else if (args[0].equalsIgnoreCase("kick")) {
+				if (args.length == 3) {
+					if (canParse(args[2])) {
+						Player kicked = Bukkit.getPlayer(args[1]);
+						SimpleMeta.setKicked(player, kicked, Integer.parseInt(args[2]));
+					} else {
+						super.message(player, "Please specify a valid number");
+					}
+				} else {
+					super.message(player, "You must specify how long to kick for (/t kick [Player] [time]");
+				}
 			} else {
 				Central.playerComs.onCommand(sender, command, label, args, true);
 			}
@@ -165,6 +176,15 @@ public class AdminCommands extends TeamsPlugin implements CommandExecutor {
 			return false;
 		} else {
 			return null;
+		}
+	}
+
+	public boolean canParse(String s) {
+		try {
+			Integer.parseInt(s);
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
 	}
 }
