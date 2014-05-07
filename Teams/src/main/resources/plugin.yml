@@ -62,3 +62,15 @@ permissions:
   killshotteams.kick:
     description: Gives access to the kick command.
     default: false
+  killshotteams.admin.kick:
+    description: Gives access to the admin kick command.
+    default: false
+  killshotteams.admin.ban:
+    description: Gives access to the admin ban command.
+    default: false
+  killshotteams.admin.admin:
+    description: Gives access to the admin admin command.
+    default: false
+  killshotteams.spawn.protection:
+    description: Gives access to the spawnprotection command.
+    default: false

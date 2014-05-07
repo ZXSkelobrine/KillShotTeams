@@ -36,9 +36,9 @@ public class ManagerCommands extends TeamsPlugin {
 					location.add(x);
 					location.add(y);
 					location.add(z);
-					SimpleMeta.addListToConfig("teams." + team + ".hqloc", location);
+					SimpleMeta.addStringListToConfig("teams." + team + ".hqloc", location);
 					String world = newHQ.getWorld().getName();
-					SimpleMeta.addConfig("teams." + team + ".hqworld", world);
+					SimpleMeta.addStringToConfig("teams." + team + ".hqworld", world);
 					super.message(player, "Successfully set the team HQ point!");
 				} else {
 					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.sethq)");
@@ -54,9 +54,9 @@ public class ManagerCommands extends TeamsPlugin {
 					location.add(x);
 					location.add(y);
 					location.add(z);
-					SimpleMeta.addListToConfig("teams." + team + ".rallyloc", location);
+					SimpleMeta.addStringListToConfig("teams." + team + ".rallyloc", location);
 					String world = newRally.getWorld().getName();
-					SimpleMeta.addConfig("teams." + team + ".rallyworld", world);
+					SimpleMeta.addStringToConfig("teams." + team + ".rallyworld", world);
 					super.message(player, "Successfully set the team rally point!");
 				} else {
 					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.setrally)");
@@ -65,7 +65,7 @@ public class ManagerCommands extends TeamsPlugin {
 				if (super.checkPermissions(player, "password")) {
 					if (args.length == 2) {
 						String team = SimpleMeta.getPlayerTeam(player);
-						SimpleMeta.addConfig("teams." + team + ".pass", args[1]);
+						SimpleMeta.addStringToConfig("teams." + team + ".pass", args[1]);
 						super.message(player, "Successfully updated the password.");
 					}
 				} else {
@@ -73,17 +73,24 @@ public class ManagerCommands extends TeamsPlugin {
 				}
 			} else if (args[0].equalsIgnoreCase("kick")) {
 				if (checkPermissions(player, "kick")) {
-					if (args.length == 3) {
-						if (canParse(args[2])) {
-							Player kicked = Bukkit.getPlayer(args[1]);
-							SimpleMeta.setKicked(player, kicked, Integer.parseInt(args[2]));
+					if (!SimpleMeta.isAccountBanned(player)) {
+						if (!SimpleMeta.isAccountKicked(player)) {
+							if (args.length == 2) {
+								if (SimpleMeta.getPlayerTeam(Bukkit.getPlayer(args[1])).equals(SimpleMeta.getPlayerTeam(player))) {
+									SimpleMeta.removeTeam(Bukkit.getPlayer(args[1]));
+								} else {
+									super.message(player, "They are not a part of your team.");
+								}
+							} else {
+								super.message(player, "You must specify how long to kick for (/t kick [Player]");
+							}
 						} else {
-							super.message(player, "Please specify a valid number");
+							super.message(player, "You account has been suspended. " + ((SimpleMeta.getAccountKickTime(player) - System.nanoTime()) / SimpleMeta.NANO_MODIFIER) + " seconds remaining");
 						}
 					} else {
-						super.message(player, "You must specify how long to kick for (/t kick [Player] [time]");
+						super.message(player, "our account has been suspended permanently");
 					}
-				}else{
+				} else {
 					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.kick)");
 				}
 			} else {

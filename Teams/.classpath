@@ -33,5 +33,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Ryan/Desktop/Server/plugins/Essentials.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Ryan/Downloads/General Files/Jars/Libs/WorldGuard.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Ryan/Downloads/General Files/Jars/Libs/WorldEdit.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

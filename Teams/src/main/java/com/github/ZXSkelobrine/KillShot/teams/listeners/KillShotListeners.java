@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -57,6 +58,23 @@ public class KillShotListeners extends TeamsPlugin implements Listener {
 						event.setCancelled(true);
 					}
 				}
+				if (SimpleMeta.isProtected(damagee)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onPlayerCommandEvent(PlayerCommandPreprocessEvent event) {
+		if (event.getMessage().equalsIgnoreCase("spawn")) {
+			if (SimpleMeta.booleanMetaCheck(event.getPlayer(), "killshotteams.spawn.allowCommandProtection")) {
+				if (!SimpleMeta.isAccountSuspended(event.getPlayer())) {
+					if (!SimpleMeta.isProtected(event.getPlayer())) {
+						SimpleMeta.setBooleanMetadata(event.getPlayer(), "killshotteams.spawn.protection", true);
+						super.message(event.getPlayer(), "You have spawn protection");
+					}
+				}
 			}
 		}
 	}
@@ -70,14 +88,33 @@ public class KillShotListeners extends TeamsPlugin implements Listener {
 				e.printStackTrace();
 			}
 		}
-		if (SimpleMeta.isKicked(event.getPlayer())) {
+		if (SimpleMeta.isTeamKicked(event.getPlayer())) {
 			long current = System.nanoTime();
-			long seconds = SimpleMeta.getKickTime(event.getPlayer());
+			long seconds = SimpleMeta.getTeamKickTime(event.getPlayer());
 			if (current > seconds) {
-				SimpleMeta.removeKick(event.getPlayer());
+				SimpleMeta.removeTeamKick(event.getPlayer());
 				super.message(event.getPlayer(), "Your kick has ended");
 				super.joinTeam(event.getPlayer(), SimpleMeta.getPlayerTeam(event.getPlayer()));
 			}
 		}
+		if (SimpleMeta.isAccountKicked(event.getPlayer())) {
+			super.message(event.getPlayer(), "Your account is suspended.");
+			long current = System.nanoTime();
+			long seconds = SimpleMeta.getAccountKickTime(event.getPlayer());
+			if (current > seconds) {
+				SimpleMeta.removeAccountKick(event.getPlayer());
+				super.message(event.getPlayer(), "Your kick has ended");
+				super.joinTeam(event.getPlayer(), SimpleMeta.getPlayerTeam(event.getPlayer()));
+			}
+		}
+		if (SimpleMeta.isAccountBanned(event.getPlayer())) {
+			super.message(event.getPlayer(), "Your account is suspended.");
+		}
+		if (SimpleMeta.booleanMetaCheck(event.getPlayer(), "killshotteams.spawn.protection")) {
+			if (!SimpleMeta.isProtected(event.getPlayer())) {
+				super.message(event.getPlayer(), "You have lost spawn protection");
+			}
+		}
 	}
+
 }
