@@ -62,7 +62,7 @@ public class PlayerCommands extends TeamsPlugin {
 						super.message(player, "You account has been suspended. " + ((SimpleMeta.getAccountKickTime(player) - System.nanoTime()) / SimpleMeta.NANO_MODIFIER) + " seconds remaining");
 					}
 				} else {
-					super.message(player, "our account has been suspended permanently");
+					super.message(player, "Your account has been suspended permanently");
 				}
 			} else {
 				super.message(sender, "You must be a player to do that.");
@@ -95,7 +95,7 @@ public class PlayerCommands extends TeamsPlugin {
 						super.message(player, "You account has been suspended. " + ((SimpleMeta.getAccountKickTime(player) - System.nanoTime()) / SimpleMeta.NANO_MODIFIER) + " seconds remaining");
 					}
 				} else {
-					super.message(player, "our account has been suspended permanently");
+					super.message(player, "Your account has been suspended permanently");
 				}
 			} else {
 				super.message(sender, "You must be a player to do that.");
@@ -119,7 +119,7 @@ public class PlayerCommands extends TeamsPlugin {
 						super.message(player, "You account has been suspended. " + ((SimpleMeta.getAccountKickTime(player) - System.nanoTime()) / SimpleMeta.NANO_MODIFIER) + " seconds remaining");
 					}
 				} else {
-					super.message(player, "our account has been suspended permanently");
+					super.message(player, "Your account has been suspended permanently");
 				}
 			} else {
 				super.message(sender, "You must be player to do that.");
@@ -175,7 +175,7 @@ public class PlayerCommands extends TeamsPlugin {
 						super.message(player, "You account has been suspended. " + ((SimpleMeta.getAccountKickTime(player) - System.nanoTime()) / SimpleMeta.NANO_MODIFIER) + " seconds remaining");
 					}
 				} else {
-					super.message(player, "our account has been suspended permanently");
+					super.message(player, "Your account has been suspended permanently");
 				}
 			} else {
 				super.message(sender, "You must be player to do that.");
@@ -214,7 +214,7 @@ public class PlayerCommands extends TeamsPlugin {
 						super.message(player, "You account has been suspended. " + ((SimpleMeta.getAccountKickTime(player) - System.nanoTime()) / SimpleMeta.NANO_MODIFIER) + " seconds remaining");
 					}
 				} else {
-					super.message(player, "our account has been suspended permanently");
+					super.message(player, "Your account has been suspended permanently");
 				}
 			} else {
 				super.message(sender, "You must be player to do that.");
@@ -253,7 +253,7 @@ public class PlayerCommands extends TeamsPlugin {
 						super.message(player, "You account has been suspended. " + ((SimpleMeta.getAccountKickTime(player) - System.nanoTime()) / SimpleMeta.NANO_MODIFIER) + " seconds remaining");
 					}
 				} else {
-					super.message(player, "our account has been suspended permanently");
+					super.message(player, "Your account has been suspended permanently");
 				}
 			} else {
 				super.message(sender, "You must be player to do that.");
@@ -273,11 +273,22 @@ public class PlayerCommands extends TeamsPlugin {
 							super.message(player, "You account has been suspended. " + ((SimpleMeta.getAccountKickTime(player) - System.nanoTime()) / SimpleMeta.NANO_MODIFIER) + " seconds remaining");
 						}
 					} else {
-						super.message(player, "our account has been suspended permanently");
+						super.message(player, "Your account has been suspended permanently");
 					}
 				} else {
 					super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.spawn.protection)");
 				}
+			} else {
+				super.message(sender, "You must be player to do that.");
+			}
+		}
+		if (args[0].equalsIgnoreCase("error")) {
+			if (sender instanceof Player) {
+				StringBuilder sb = new StringBuilder();
+				for (int i = 1; i < args.length; i++) {
+					sb.append(args[i] + " ");
+				}
+				SimpleMeta.logError(sb.toString(), ((Player) sender));
 			} else {
 				super.message(sender, "You must be player to do that.");
 			}

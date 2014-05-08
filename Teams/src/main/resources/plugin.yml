@@ -71,6 +71,9 @@ permissions:
   killshotteams.admin.admin:
     description: Gives access to the admin admin command.
     default: false
+  killshotteams.admin.reset:
+    description: Gives access to the admin reset command.
+    default: false
   killshotteams.spawn.protection:
     description: Gives access to the spawnprotection command.
     default: false

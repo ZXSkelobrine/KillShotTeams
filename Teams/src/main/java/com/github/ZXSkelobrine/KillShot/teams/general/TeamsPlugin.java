@@ -115,6 +115,8 @@ public class TeamsPlugin {
 			return player.hasPermission("killshotteams.admin.ban");
 		case "ovr:admin":
 			return player.hasPermission("killshotteams.admin.admin");
+		case "ovr:reset":
+			return player.hasPermission("killshotteams.admin.reset");
 		}
 		return false;
 	}

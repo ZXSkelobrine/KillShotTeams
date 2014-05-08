@@ -115,6 +115,21 @@ public class OverlordCommands extends TeamsPlugin {
 			} else {
 				super.message(sender, "You must be a player to do that.");
 			}
+		} else if (args[0].equalsIgnoreCase("resetfile")) {
+			if (sender instanceof Player) {
+				Player player = (Player) sender;
+				if (args.length == 2) {
+					if (checkPermissions(player, "ovr:reset")) {
+						SimpleMeta.resetFile(Bukkit.getPlayer(args[1]));
+					} else {
+						super.message(player, "Sorry, you dont have permissions to do that" + ChatColor.ITALIC + "(killshotteams.admin.admin)");
+					}
+				} else {
+					super.message(player, "Please format the command as so: /t reset [Player]");
+				}
+			} else {
+				super.message(sender, "You must be a player to do that.");
+			}
 		} else {
 			Central.playerComs.onCommand(sender, command, label, args, true);
 		}

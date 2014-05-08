@@ -2,9 +2,12 @@ package com.github.ZXSkelobrine.KillShot.teams.metadata;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -215,7 +218,7 @@ public class SimpleMeta extends TeamsPlugin {
 	 * @return if the player has a team.
 	 */
 	public static boolean hasTeam(Player player) {
-		return Boolean.parseBoolean(readFromPlayerFile(player, 4));
+		return parseBoolean(readFromPlayerFile(player, 4));
 	}
 
 	/**
@@ -228,7 +231,7 @@ public class SimpleMeta extends TeamsPlugin {
 	 * @return if the player owns a team.
 	 */
 	public static boolean ownsTeam(Player player) {
-		return Boolean.parseBoolean(readFromPlayerFile(player, 0));
+		return parseBoolean(readFromPlayerFile(player, 0));
 	}
 
 	/**
@@ -284,7 +287,7 @@ public class SimpleMeta extends TeamsPlugin {
 	 * @return
 	 */
 	public static boolean isTeamKicked(Player player) {
-		return Boolean.parseBoolean(readFromPlayerFile(player, 2));
+		return parseBoolean(readFromPlayerFile(player, 2));
 	}
 
 	/**
@@ -293,7 +296,7 @@ public class SimpleMeta extends TeamsPlugin {
 	 * @return
 	 */
 	public static long getTeamKickTime(Player player) {
-		return Long.parseLong(readFromPlayerFile(player, 3));
+		return parseLong(readFromPlayerFile(player, 3));
 	}
 
 	// Read write section.
@@ -358,6 +361,24 @@ public class SimpleMeta extends TeamsPlugin {
 		}
 	}
 
+	private static void writeToErrorFile(String error) {
+		try {
+			File file = new File(new File("plugins/KillShotTeams/errors/error.txt").getAbsolutePath());
+			if (!file.exists()) file.createNewFile();
+			FileOutputStream fos = new FileOutputStream(file, true);
+			PrintWriter pw = new PrintWriter(fos);
+			pw.println(error);
+			pw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void logError(String error, Player player) {
+		String pass = new SimpleDateFormat().format(Calendar.getInstance().getTime()) + ": " + player.getDisplayName() + ": " + error;
+		writeToErrorFile(pass);
+	}
+
 	// Account Kick Section.
 
 	/**
@@ -410,7 +431,7 @@ public class SimpleMeta extends TeamsPlugin {
 	 * @return
 	 */
 	public static boolean isAccountKicked(Player player) {
-		return Boolean.parseBoolean(readFromPlayerFile(player, 5));
+		return parseBoolean(readFromPlayerFile(player, 5));
 	}
 
 	/**
@@ -419,7 +440,7 @@ public class SimpleMeta extends TeamsPlugin {
 	 * @return
 	 */
 	public static long getAccountKickTime(Player player) {
-		return Integer.parseInt(readFromPlayerFile(player, 6));
+		return parseLong(readFromPlayerFile(player, 6));
 	}
 
 	/**
@@ -471,7 +492,7 @@ public class SimpleMeta extends TeamsPlugin {
 	 * @return
 	 */
 	public static boolean isAccountBanned(Player player) {
-		return Boolean.parseBoolean(readFromPlayerFile(player, 9));
+		return parseBoolean(readFromPlayerFile(player, 9));
 	}
 
 	/**
@@ -551,6 +572,27 @@ public class SimpleMeta extends TeamsPlugin {
 	}
 
 	public static boolean isAdmin(Player player) {
-		return Boolean.parseBoolean(readFromPlayerFile(player, 12));
+		return parseBoolean(readFromPlayerFile(player, 12));
+	}
+
+	@Deprecated
+	public static void resetFile(Player player) {
+		writeToPlayerFile(player, false, false, "", false, 0, false, 0, "", "", false, "", "", false);
+	}
+
+	private static long parseLong(String s) {
+		try {
+			return Long.parseLong(s);
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	private static boolean parseBoolean(String s) {
+		try {
+			return Boolean.parseBoolean(s);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
